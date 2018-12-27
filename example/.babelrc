@@ -1,7 +1,24 @@
 {
-  "presets": [
-    ["@babel/env", { "targets": { "node": "current" }, "modules": "commonjs" }],
-    ["@babel/typescript", { "jsxPragma": "h" }]
-  ],
-  "plugins": [["@babel/plugin-transform-react-jsx", { "pragma": "h" }]]
+  "env": {
+    "react": {
+      "presets": [
+        [
+          "@babel/env",
+          { "targets": { "node": "current" }, "modules": "commonjs" }
+        ],
+        "@babel/typescript"
+      ],
+      "plugins": [["@babel/plugin-transform-react-jsx"]]
+    },
+    "preact": {
+      "presets": [
+        [
+          "@babel/env",
+          { "targets": { "node": "current" }, "modules": "commonjs" }
+        ],
+        ["@babel/typescript", { "jsxPragma": "h" }]
+      ],
+      "plugins": [["@babel/plugin-transform-react-jsx", { "pragma": "h" }]]
+    }
+  }
 }

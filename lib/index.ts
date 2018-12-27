@@ -1,14 +1,17 @@
 /// <reference lib="esnext" />
 
 import * as path from 'path'
-import { h } from 'preact'
-import { render } from 'preact-render-to-string'
 import { TemplateDelegate, HelperOptions, RuntimeOptions } from 'handlebars'
+import * as react from './react'
+import * as preact from './preact'
 
 interface AdapterConfig {
   componentsDir: string
   partialOptions?: RuntimeOptions
   helperOptions?: HelperOptions
+  createElement: any
+  render: any
+  preact?: boolean
 }
 
 export default (
@@ -17,6 +20,8 @@ export default (
 ) => {
   const config: AdapterConfig = {
     componentsDir: process.cwd(),
+    createElement: options.preact ? preact.createElement : react.createElement,
+    render: options.preact ? preact.render : react.render,
     ...options,
   }
 
@@ -74,7 +79,7 @@ export default (
     Object.assign(props, options.hash)
 
     const component = require(path.join(componentsDir, compName)).default
-    const html = render(h(component, props))
+    const html = config.render(config.createElement(component, props))
 
     const rehydrated = rehydrate(html)
 

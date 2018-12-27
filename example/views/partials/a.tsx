@@ -1,5 +1,10 @@
-import { h } from 'preact'
 import { renderPartial, renderHelper } from '../../src/handlebars'
+
+if (process.env.NODE_ENV === 'preact') {
+  var { h } = require('preact')
+} else {
+  var React = require('react')
+}
 
 export default ({ message }) => (
   <div>

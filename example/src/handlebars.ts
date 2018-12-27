@@ -27,6 +27,7 @@ fs.readdirSync(path.resolve('example/views/helpers')).forEach(filename => {
 
 const { renderPartial, renderHelper, renderJsx } = adapter(handlebars, {
   componentsDir: 'example/views/partials',
+  preact: process.env.NODE_ENV === 'preact',
 })
 
 handlebars.registerHelper('jsx', renderJsx)

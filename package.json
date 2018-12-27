@@ -4,7 +4,8 @@
   "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon -r ./register -e .ts,.tsx example/src/index.ts",
+    "dev": "NODE_ENV=preact nodemon -r ./register -e .ts,.tsx example/src/index.ts",
+    "dev-react": "NODE_ENV=react yarn dev",
     "build": "babel lib/index.ts -d dist -x '.ts' -s true",
     "typecheck": "tsc lib/index.ts --noEmit",
     "test": "yarn typecheck",
@@ -14,7 +15,9 @@
     "@types/handlebars": "^4.x",
     "handlebars": "^4.x",
     "preact": "^8.x",
-    "preact-render-to-string": "^4.x"
+    "preact-render-to-string": "^4.x",
+    "react": "^16.7.x",
+    "react-dom": "^16.7.x"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.0",
