@@ -1,0 +1,30 @@
+{
+  "name": "handlebars-jsx-adapter",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon -r ./register -e .ts,.tsx example/src/index.ts",
+    "build": "babel lib/index.ts -d dist -x '.ts' -s true",
+    "typecheck": "tsc lib/index.ts --noEmit",
+    "test": "yarn typecheck",
+    "prepublish": "yarn build"
+  },
+  "dependencies": {
+    "@types/handlebars": "^4.x",
+    "handlebars": "^4.x",
+    "preact": "^8.x",
+    "preact-render-to-string": "^4.x"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.2.0",
+    "@babel/core": "^7.2.0",
+    "@babel/plugin-transform-react-jsx": "^7.2.0",
+    "@babel/preset-env": "^7.2.0",
+    "@babel/preset-typescript": "^7.1.0",
+    "@babel/register": "^7.0.0",
+    "@types/node": "^9.6.40",
+    "nodemon": "^1.18.9",
+    "typescript": "^3.2.2"
+  }
+}
