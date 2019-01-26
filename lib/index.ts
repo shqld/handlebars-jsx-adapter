@@ -1,18 +1,22 @@
 /// <reference lib="esnext" />
 
 import * as path from 'path'
+import * as fs from 'fs'
 import { TemplateDelegate, HelperOptions, RuntimeOptions } from 'handlebars'
 import * as react from './react'
 import * as preact from './preact'
 
 interface AdapterConfig {
-  componentsDir: string
+  componentsDir: string | Array<string>
   partialOptions?: RuntimeOptions
   helperOptions?: HelperOptions
   createElement: any
   render: any
   preact?: boolean
 }
+
+const normalizeArray = <T>(some: T | Array<T>): Array<T> =>
+  Array.isArray(some) ? some : [some]
 
 export default (
   handlebars: typeof Handlebars,
@@ -25,9 +29,9 @@ export default (
     ...options,
   }
 
-  const componentsDir = path.isAbsolute(config.componentsDir)
-    ? config.componentsDir
-    : path.resolve(config.componentsDir)
+  const componentsDirs = normalizeArray(config.componentsDir).map(dirPath =>
+    path.isAbsolute(dirPath) ? dirPath : path.resolve(dirPath)
+  )
 
   const key = 'hbs' + Date.now() + 'jsx'
   const rKey = new RegExp(key, 'g')
@@ -78,7 +82,19 @@ export default (
 
     Object.assign(props, options.hash)
 
-    const component = require(path.join(componentsDir, compName)).default
+    let module
+    for (const dirPath of componentsDirs) {
+      try {
+        module = require(path.join(dirPath, compName))
+        break
+      } catch (err) {}
+    }
+
+    if (!module) {
+      throw new Error(`'${compName}' not found.`)
+    }
+
+    const component = module.default || module
     const html = config.render(config.createElement(component, props))
 
     const rehydrated = rehydrate(html)
