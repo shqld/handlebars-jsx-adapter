@@ -52,10 +52,10 @@ export default ({
   }
 
   function renderHelper(helperName: string, ...args): string | null {
-    const hash = args.pop() || {}
+    const options = args.pop() || {}
 
     const helper = helpers[helperName]
-    const resolved: string = helper(...args, { hash })
+    const resolved: string = helper(...args, { data: {}, hash: {}, ...options })
 
     if (!resolved) {
       return null
@@ -70,10 +70,10 @@ export default ({
     html.replace(rKey, () => renderedQueue.shift()!)
 
   function renderJsx(...args) {
-    const options: HelperOptions = args.length >= 3 ? args.pop() : {}
-    const [compName, props = {}] = args
+    const options: HelperOptions = args.pop()
+    const [compName, rawProps = {}] = args
 
-    Object.assign(props, options.hash)
+    const props = Object.assign({}, rawProps, options)
 
     let module
     for (const dirPath of componentsDirs) {
