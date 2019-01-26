@@ -31,6 +31,7 @@ export default ({
 
   const templates = {}
   const renderedQueue: Array<string> = []
+  let currentData = null
 
   const { helpers, partials } = handlebars
 
@@ -44,7 +45,7 @@ export default ({
 
   function renderPartial(partialName: string, props: object): string {
     const template = getTemplate(partialName)
-    const rendered = template(props, partialOptions)
+    const rendered = template(props, { ...partialOptions, data: currentData })
 
     renderedQueue.push(rendered)
 
@@ -52,10 +53,10 @@ export default ({
   }
 
   function renderHelper(helperName: string, ...args): string | null {
-    const options = args.pop() || {}
+    const hash = args.pop() || {}
 
     const helper = helpers[helperName]
-    const resolved: string = helper(...args, { data: {}, hash: {}, ...options })
+    const resolved: string = helper(...args, { hash, data: currentData })
 
     if (!resolved) {
       return null
@@ -88,6 +89,7 @@ export default ({
     }
 
     const component = module.default || module
+    currentData = options.data
     const html = render(createElement(component, props))
 
     const rehydrated = rehydrate(html)
@@ -95,5 +97,5 @@ export default ({
     return rehydrated
   }
 
-  return { renderPartial, renderHelper, renderJsx }
+  return { renderJsx, renderPartial, renderHelper }
 }
