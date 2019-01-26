@@ -12,12 +12,6 @@
     "prepublish": "yarn build"
   },
   "dependencies": {
-    "@types/handlebars": "^4.x",
-    "handlebars": "^4.x",
-    "preact": "^8.x",
-    "preact-render-to-string": "^4.x",
-    "react": "^16.7.x",
-    "react-dom": "^16.7.x"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.0",
@@ -26,8 +20,14 @@
     "@babel/preset-env": "^7.2.0",
     "@babel/preset-typescript": "^7.1.0",
     "@babel/register": "^7.0.0",
+    "@types/handlebars": "^4.x",
     "@types/node": "^9.6.40",
+    "handlebars": "^4.x",
     "nodemon": "^1.18.9",
+    "preact": "^8.x",
+    "preact-render-to-string": "^4.x",
+    "react": "^16.7.x",
+    "react-dom": "^16.7.x",
     "typescript": "^3.2.2"
   }
 }

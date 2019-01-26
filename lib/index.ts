@@ -3,33 +3,26 @@
 import * as path from 'path'
 import * as fs from 'fs'
 import { TemplateDelegate, HelperOptions, RuntimeOptions } from 'handlebars'
-import * as react from './react'
-import * as preact from './preact'
 
 interface AdapterConfig {
-  componentsDir: string | Array<string>
+  handlebars: typeof Handlebars
+  createElement: Function
+  render: Function
+  componentsDir?: string | Array<string>
   partialOptions?: RuntimeOptions
-  helperOptions?: HelperOptions
-  createElement: any
-  render: any
-  preact?: boolean
 }
 
 const normalizeArray = <T>(some: T | Array<T>): Array<T> =>
   Array.isArray(some) ? some : [some]
 
-export default (
-  handlebars: typeof Handlebars,
-  options: Partial<AdapterConfig>
-) => {
-  const config: AdapterConfig = {
-    componentsDir: process.cwd(),
-    createElement: options.preact ? preact.createElement : react.createElement,
-    render: options.preact ? preact.render : react.render,
-    ...options,
-  }
-
-  const componentsDirs = normalizeArray(config.componentsDir).map(dirPath =>
+export default ({
+  handlebars,
+  componentsDir = process.cwd(),
+  createElement,
+  render,
+  partialOptions = {},
+}: AdapterConfig) => {
+  const componentsDirs = normalizeArray(componentsDir).map(dirPath =>
     path.isAbsolute(dirPath) ? dirPath : path.resolve(dirPath)
   )
 
@@ -51,7 +44,7 @@ export default (
 
   function renderPartial(partialName: string, props: object): string {
     const template = getTemplate(partialName)
-    const rendered = template(props, config.partialOptions)
+    const rendered = template(props, partialOptions)
 
     renderedQueue.push(rendered)
 
@@ -62,7 +55,7 @@ export default (
     const hash = args.pop() || {}
 
     const helper = helpers[helperName]
-    const resolved: string = helper(...args, { ...config.helperOptions, hash })
+    const resolved: string = helper(...args, { hash })
 
     if (!resolved) {
       return null
@@ -95,7 +88,7 @@ export default (
     }
 
     const component = module.default || module
-    const html = config.render(config.createElement(component, props))
+    const html = render(createElement(component, props))
 
     const rehydrated = rehydrate(html)
 

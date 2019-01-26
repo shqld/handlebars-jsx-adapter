@@ -1,6 +1,8 @@
 import fs from 'fs'
 import path from 'path'
 import Handlebars from 'handlebars'
+import { h } from 'preact'
+import { render } from 'preact-render-to-string'
 import adapter from '../../lib'
 
 const handlebars = Handlebars.create()
@@ -25,9 +27,11 @@ fs.readdirSync(path.resolve('example/views/helpers')).forEach(filename => {
   }
 })
 
-const { renderPartial, renderHelper, renderJsx } = adapter(handlebars, {
+const { renderPartial, renderHelper, renderJsx } = adapter({
+  handlebars,
   componentsDir: 'example/views/partials',
-  preact: process.env.NODE_ENV === 'preact',
+  createElement: h,
+  render,
 })
 
 handlebars.registerHelper('jsx', renderJsx)
