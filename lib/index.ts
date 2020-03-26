@@ -76,16 +76,32 @@ export default ({
 
     const props = Object.assign({}, rawProps, options)
 
-    let module
+    let module, requireErr
     for (const dirPath of componentsDirs) {
       try {
         module = require(path.join(dirPath, compName))
         break
-      } catch (err) {}
+      } catch (err) {
+        if (err.code !== 'MODULE_NOT_FOUND') requireErr = err
+      }
+    }
+
+    if (requireErr) {
+      throw requireErr
     }
 
     if (!module) {
-      throw new Error(`'${compName}' not found.`)
+      const err: Error & { code?: string } = new Error(
+        [
+          `Cannot find module '${compName}'`,
+          ...componentsDirs.map(
+            dirPath => `  - ${path.join(dirPath, compName)}`
+          ),
+        ].join('\n')
+      )
+      err.code = 'MODULE_NOT_FOUND'
+
+      throw err
     }
 
     const component = module.default || module
